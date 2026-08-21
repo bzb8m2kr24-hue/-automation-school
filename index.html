@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6d5dfc">
+<title>Automation School — IA, n8n & Business</title>
+<style>
+:root{--bg:#f6f6fb;--card:#fff;--text:#171722;--muted:#707080;--line:#e8e8f0;--a:#6d5dfc;--a2:#eeeaff;--good:#16a36b;--bad:#e05252;--shadow:0 8px 30px #1717220c}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}.app{min-height:100vh}.top{position:sticky;top:0;z-index:10;background:#ffffffeb;backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.nav{max-width:1100px;margin:auto;display:flex;align-items:center;gap:12px;padding:12px 16px}.logo{font-weight:900;font-size:18px;display:flex;align-items:center;gap:8px}.logo span{background:var(--a);color:#fff;border-radius:10px;padding:7px}.navlinks{display:flex;gap:4px;margin-left:auto;overflow:auto}.nav button{background:transparent;color:var(--muted);padding:8px 10px}.nav button.active{background:var(--a2);color:var(--a)}
+main{max-width:1100px;margin:auto;padding:24px 16px 70px}.hero{background:linear-gradient(135deg,#6d5dfc,#8f83ff);color:white;border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:var(--shadow)}h1{font-size:clamp(28px,6vw,48px);line-height:1.03;margin:8px 0 12px}.hero p{max-width:720px;line-height:1.6;opacity:.92}.bar{height:10px;background:#ffffff38;border-radius:99px;overflow:hidden;margin-top:18px}.bar>i{display:block;height:100%;background:#fff;width:0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{background:#ffffff20;padding:12px;border-radius:14px}.stat b{display:block;font-size:22px}.section-title{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:28px 0 12px}.muted{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}.card h3{margin:8px 0}.badge{display:inline-block;background:var(--a2);color:var(--a);padding:5px 9px;border-radius:99px;font-size:12px;font-weight:800}.pill{display:inline-block;background:#f0f0f5;color:#555565;padding:5px 8px;border-radius:99px;font-size:12px}.done{color:var(--good);font-weight:800}.btn{border:0;border-radius:12px;background:var(--a);color:#fff;padding:11px 15px;font-weight:800;cursor:pointer}.btn.secondary{background:var(--a2);color:var(--a)}.btn.ghost{background:#f2f2f6;color:#555}.btn:disabled{opacity:.5}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.lesson-head{margin-bottom:18px}.lesson-content{max-width:800px}.concept{background:#faf9ff;border:1px solid #e3dfff;border-left:4px solid var(--a);border-radius:12px;padding:14px;margin:14px 0;line-height:1.6}.warning{background:#fff8e8;border:1px solid #f2dda4;border-radius:12px;padding:14px}.step{display:flex;gap:12px;margin:14px 0}.num{min-width:30px;height:30px;border-radius:50%;background:var(--a);color:white;display:grid;place-items:center;font-weight:800}.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0}.flow span{background:#f0efff;border:1px solid #ddd8ff;padding:10px 12px;border-radius:10px;font-weight:700}.quiz{margin-top:22px}.option{display:block;border:1px solid var(--line);padding:12px;border-radius:12px;margin:8px 0;cursor:pointer}.option:hover{border-color:var(--a)}.feedback{margin-top:10px;font-weight:800}.good{color:var(--good)}.bad{color:var(--bad)}.tabs{display:flex;gap:6px;overflow:auto;margin-bottom:16px}.tabs button{white-space:nowrap}.search{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:white;outline:none}.term{padding:14px 0;border-bottom:1px solid var(--line)}.term b{font-size:16px}.textarea{width:100%;min-height:130px;padding:12px;border:1px solid var(--line);border-radius:12px;resize:vertical}.table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:left}.small{font-size:13px}.hide{display:none!important}
+@media(max-width:650px){.navlinks button{font-size:12px}.stats{grid-template-columns:1fr}.hero{padding:22px}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><nav class="nav">
+<div class="logo"><span>⚡</span> Automation School</div>
+<div class="navlinks">
+<button data-page="home">Accueil</button><button data-page="course">Cours</button><button data-page="practice">Pratique</button><button data-page="business">Business Lab</button><button data-page="glossary">Glossaire</button>
+</div>
+</nav></header>
+<main id="app"></main>
+</div>
+<script>
+const KEY="automation_school_full_v1";
+let state=JSON.parse(localStorage.getItem(KEY)||'{"done":[],"notes":"","xp":0}');
+const modules=[
+{id:1,title:"Les fondamentaux",tag:"Débutant",desc:"Comprendre workflow, trigger, node, input et output sans jargon.",lessons:[
+["Automatisation : le principe",`<p>Une automatisation fait exécuter automatiquement une tâche ou une suite de tâches selon une règle.</p><div class="concept"><b>Exemple :</b> un prospect remplit un formulaire → ses informations sont récupérées → elles sont enregistrées → une notification est envoyée.</div><p>Le but n'est pas de « faire de l'IA ». Le but est de <b>faire gagner du temps ou améliorer un processus</b>.</p>`],
+["Workflow, trigger et node",`<p><b>Workflow</b> = toute la chaîne. <b>Trigger</b> = ce qui démarre. <b>Node</b> = une étape.</p><div class="flow"><span>Trigger</span>→<span>Node</span>→<span>Node</span>→<span>Résultat</span></div><p>Imagine des Lego : chaque node est une brique et les connexions font circuler les informations.</p>`],
+["Input, traitement, output",`<p><b>Input</b> : données qui entrent. <b>Traitement</b> : ce que fait une étape. <b>Output</b> : données qui ressortent.</p><div class="concept">Input : « Emma, devis, Nantes » → traitement : classer la demande → output : « prospect chaud / devis ».</div>`],
+["Déclencheurs",`<p>Un workflow peut démarrer parce qu'un formulaire est envoyé, un email arrive, un horaire est atteint, un fichier est créé ou une application signale un événement.</p><div class="warning"><b>À retenir :</b> un trigger n'est pas forcément de l'IA. La plupart des automatisations utiles commencent par un événement très simple.</div>`],
+["Ton premier workflow sur papier",`<p>Avant n8n, écris : <b>« Quand X arrive, faire A, puis B, puis C ».</b></p><ol><li>Choisis un événement.</li><li>Liste les informations nécessaires.</li><li>Liste les actions.</li><li>Définis le résultat attendu.</li></ol><div class="concept">Exercice : « nouveau prospect → enregistrer → notifier le commercial ».</div>`]
+]},
+{id:2,title:"Prendre en main n8n",tag:"Débutant",desc:"Comprendre l'interface, les nodes, les connexions et les exécutions.",lessons:[
+["À quoi sert n8n ?",`<p>n8n sert à connecter des applications et à orchestrer des actions. Tu peux le voir comme un atelier où tu construis des workflows.</p><div class="flow"><span>Formulaire</span>→<span>n8n</span>→<span>CRM</span>→<span>Email</span></div>`],
+["Les nodes",`<p>Chaque node réalise une opération : récupérer des données, les transformer, envoyer un message, créer une ligne, appeler un service, etc.</p><p>Au début, apprends à lire un node : <b>ce qu'il reçoit → ce qu'il fait → ce qu'il renvoie</b>.</p>`],
+["Les connexions",`<p>Une connexion indique que la sortie d'une étape alimente l'étape suivante. Une bonne pratique est de garder un workflow lisible et de nommer les étapes importantes.</p>`],
+["Exécuter et tester",`<p>Une automatisation se construit par petits tests. Tu exécutes une étape, observes les données, corriges, puis continues.</p><div class="warning">Ne construis pas 20 nodes avant de tester. Fais : <b>1 node → test → comprendre → node suivant</b>.</div>`],
+["Premier projet : formulaire → tableau",`<p>Projet guidé : un formulaire collecte nom + email + demande, puis n8n ajoute une ligne dans un tableau.</p><p>Objectif : comprendre la circulation des données, pas faire un système sophistiqué.</p>`]
+]},
+{id:3,title:"Données, variables & logique",tag:"Débutant+",desc:"Comprendre comment les informations circulent et comment prendre des décisions.",lessons:[
+["Champs et variables",`<p>Une donnée peut être un nom, un email, un montant, une date, une catégorie… Une variable permet de réutiliser une valeur dans une autre étape.</p><div class="concept">Exemple : « Bonjour {{prenom}} » réutilise le prénom reçu plus tôt.</div>`],
+["Conditions IF",`<p>Une condition permet de choisir un chemin : <b>si</b> le prospect est qualifié → action A ; <b>sinon</b> → action B.</p><div class="flow"><span>Prospect</span>→<span>Condition</span>↙︎ ↘︎<span>Qualifié</span><span>Non qualifié</span></div>`],
+["Filtres et routage",`<p>On peut envoyer certaines données vers une branche et d'autres vers une autre. C'est la base de nombreuses automatisations commerciales.</p>`],
+["Erreurs et tests",`<p>Une erreur ne veut pas dire que tu es mauvaise. Il faut apprendre à lire : <b>quelle étape a échoué ? quelle donnée attendait-elle ? quelle donnée a-t-elle reçue ?</b></p>`]
+]},
+{id:4,title:"API, webhooks & JSON",tag:"Intermédiaire",desc:"Enfin comprendre les termes techniques qui te semblaient compliqués.",lessons:[
+["Une API, simplement",`<p>Une API est une interface qui permet à des logiciels d'échanger des informations selon des règles définies.</p><div class="concept"><b>Analogie :</b> le restaurant. Tu demandes au serveur une commande (requête), le serveur la transmet à la cuisine, puis revient avec le résultat (réponse).</div>`],
+["Clé API et credentials",`<p>Un service peut demander une clé ou des identifiants pour autoriser n8n à communiquer avec lui. Ces secrets doivent rester privés.</p><div class="warning"><b>Règle :</b> ne partage jamais une clé API dans une capture d'écran publique ou un message.</div>`],
+["JSON sans peur",`<p>JSON est une façon structurée d'écrire des données sous forme de clés et valeurs. Tu n'as pas besoin de savoir coder pour le lire.</p><div class="concept"><code>{ "prenom": "Emma", "ville": "Nantes" }</code><br>Lis-le simplement comme : prénom = Emma, ville = Nantes.</div>`],
+["Webhook",`<p>Un webhook permet à un service d'envoyer une information à une adresse dès qu'un événement arrive. C'est un trigger très utilisé pour recevoir des événements en temps réel.</p>`],
+["HTTP Request",`<p>Un HTTP Request est une manière de demander ou d'envoyer des données à un service web. Tu apprendras d'abord à l'utiliser avec un exemple simple avant d'en faire des usages complexes.</p>`]
+]},
+{id:5,title:"IA dans les workflows",tag:"Intermédiaire",desc:"Ajouter l'IA là où elle apporte une vraie valeur.",lessons:[
+["Quand utiliser l'IA ?",`<p>L'IA est utile pour des tâches où il faut interpréter, classer, résumer, rédiger ou extraire de l'information non structurée.</p><div class="concept">Exemple : lire un message client et déterminer s'il s'agit d'une demande de devis, d'une question ou d'une réclamation.</div>`],
+["Prompt structuré",`<p>Un bon prompt précise le rôle, la tâche, les données disponibles et le format attendu. Plus le résultat doit être fiable, plus la sortie doit être cadrée.</p>`],
+["Classification",`<p>Un workflow peut utiliser l'IA pour classer un message dans une catégorie puis déclencher une action différente selon la catégorie.</p>`],
+["Extraction",`<p>L'IA peut extraire des informations d'un texte : nom, ville, budget, produit recherché, urgence… Puis n8n peut utiliser ces champs.</p>`],
+["Agent IA : comprendre avant de construire",`<p>Un agent peut raisonner sur une tâche et utiliser des outils. Mais un agent n'est pas automatiquement meilleur qu'un workflow simple.</p><div class="warning"><b>Règle :</b> si trois nodes déterministes suffisent, n'ajoute pas un agent juste parce que c'est à la mode.</div>`]
+]},
+{id:6,title:"Automatisations commerciales",tag:"Intermédiaire",desc:"Appliquer n8n + IA à la prospection, au suivi et à la relation client.",lessons:[
+["Prospect → CRM",`<p>Exemple : nouveau formulaire → validation des champs → création du prospect → attribution à un commercial.</p>`],
+["Qualification automatique",`<p>Un message entrant peut être analysé selon des critères : budget, besoin, localisation, urgence. Le résultat peut alimenter un CRM.</p>`],
+["Relance",`<p>Une relance peut être déclenchée après un délai si aucune réponse n'a été reçue. Toujours prévoir des règles d'arrêt et respecter les règles applicables aux communications commerciales.</p>`],
+["Prise de rendez-vous",`<p>On peut relier une demande entrante à un système de réservation et notifier l'équipe. Le but est de réduire les allers-retours.</p>`],
+["Tableau de bord",`<p>Une automatisation utile doit pouvoir être mesurée : nombre de prospects, délais de réponse, rendez-vous, conversions, erreurs évitées.</p>`]
+]},
+{id:7,title:"Trouver un business",tag:"Business",desc:"Passer de « je connais n8n » à « je résous un problème qui vaut de l'argent ».",lessons:[
+["Ne vends pas un outil",`<p>Un client n'achète pas « un workflow n8n ». Il achète un résultat : gagner du temps, traiter plus de demandes, réduire les oublis, accélérer les réponses ou améliorer le suivi.</p>`],
+["Trouver une niche",`<p>Une niche utile est assez précise pour comprendre les problèmes récurrents. Exemple : agences immobilières indépendantes plutôt que « toutes les entreprises ».</p>`],
+["Trouver un problème",`<p>Observe les tâches répétitives, les copier-coller, les relances oubliées, les demandes entrantes et les délais de réponse.</p>`],
+["Calculer la valeur",`<p>Demande : combien d'heures sont perdues ? combien de prospects sont oubliés ? combien vaut une vente ? Une solution devient plus facile à vendre quand son impact est concret.</p>`],
+["Créer une offre",`<p>Structure simple : <b>j'aide [type d'entreprise] à [résultat] grâce à [solution], sans [douleur actuelle].</b></p>`]
+]},
+{id:8,title:"Construire une offre vendable",tag:"Business",desc:"Prototype, démonstration, prix, premier client.",lessons:[
+["Prototype avant produit",`<p>Construis une petite version qui prouve la valeur. Ne développe pas une plateforme entière avant d'avoir parlé à des clients.</p>`],
+["Démo",`<p>Une bonne démo montre : problème actuel → automatisation → résultat. Elle doit être compréhensible par quelqu'un qui ne connaît pas n8n.</p>`],
+["Tarification",`<p>Au départ, réfléchis au coût de mise en place, à la valeur créée et au coût récurrent des outils. Ne fixe pas un prix uniquement en fonction du nombre de nodes.</p>`],
+["Prospection",`<p>Une approche simple : identifier des entreprises pertinentes, comprendre leur processus, poser une question précise et proposer une courte démonstration si le problème existe.</p>`],
+["Livraison et maintenance",`<p>Documente les accès, les workflows, les erreurs possibles et les règles d'arrêt. Une automatisation vendue devient un système à maintenir.</p>`]
+]},
+{id:9,title:"Projet final — ton premier système",tag:"Projet",desc:"Concevoir une automatisation commerciale de A à Z.",lessons:[
+["Choisir le problème",`<p>Choisis une niche et un problème précis. Exemple : traitement des demandes entrantes pour une petite agence.</p>`],
+["Dessiner le workflow",`<p>Écris le workflow sur papier avant n8n : trigger → données → décision → actions → résultat → mesure.</p>`],
+["Construire la V1",`<p>Construis uniquement le chemin principal. Teste chaque étape avec de fausses données.</p>`],
+["Ajouter une couche IA",`<p>Ajoute l'IA seulement si elle améliore une tâche d'interprétation, de classement, d'extraction ou de rédaction.</p>`],
+["Préparer la démonstration",`<p>Présente le problème en 30 secondes, montre le workflow et termine par le résultat mesurable. Ton prototype doit être compréhensible sans jargon.</p>`]
+]}
+];
+
+const glossary=[
+["Workflow","Chaîne complète d'actions automatisées."],["Trigger","Événement qui démarre un workflow."],["Node","Une étape d'un workflow n8n."],["Input","Données reçues par une étape."],["Output","Données produites par une étape."],["Variable","Valeur que l'on peut réutiliser dans un workflow."],["Condition / IF","Règle qui permet de choisir un chemin."],["API","Interface permettant à des logiciels d'échanger des données."],["API key","Secret permettant souvent d'authentifier une application auprès d'une API."],["JSON","Format structuré de données, lisible comme des paires clé/valeur."],["Webhook","Adresse qui reçoit une notification lorsqu'un événement survient."],["HTTP Request","Requête envoyée à un service web pour récupérer ou transmettre des données."],["Credential","Information d'authentification stockée pour connecter un service."],["Prompt","Instruction donnée à un modèle d'IA."],["Agent IA","Système capable d'utiliser un modèle et parfois des outils pour accomplir une tâche."],["RAG","Méthode qui permet à une IA de s'appuyer sur des documents ou données récupérés avant de répondre."],["CRM","Outil de gestion des prospects et clients."],["Lead / Prospect","Personne ou entreprise potentiellement intéressée par une offre."],["No-code","Création de systèmes avec peu ou pas de programmation manuelle."],["MVP","Version minimale d'un produit permettant de tester une idée."]];
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function doneKey(m,l){return m+"-"+l}
+function isDone(m,l){return state.done.includes(doneKey(m,l))}
+function xp(){return state.xp}
+function progress(){let total=modules.reduce((s,m)=>s+m.lessons.length,0);return {total,done:state.done.length,p:Math.round(state.done.length/total*100)}}
+function nav(page){document.querySelectorAll(".navlinks button").forEach(b=>b.classList.toggle("active",b.dataset.page===page)); render(page)}
+document.querySelectorAll(".navlinks button").forEach(b=>b.onclick=()=>nav(b.dataset.page));
+
+function render(page){
+ const app=document.getElementById("app");
+ if(page==="home") return home(app);
+ if(page==="course") return course(app);
+ if(page==="practice") return practice(app);
+ if(page==="business") return business(app);
+ if(page==="glossary") return glossaryPage(app);
+}
+function home(a){
+ const p=progress();
+ a.innerHTML=`<section class="hero"><div class="badge" style="background:#ffffff22;color:#fff">TON PARCOURS PERSONNEL</div><h1>Apprendre l'automatisation IA, sans se perdre.</h1><p>Un parcours progressif en français : bases → n8n → données/API → IA → automatisations commerciales → business → premier projet.</p><div class="bar"><i style="width:${p.p}%"></i></div><div style="margin-top:8px">${p.done}/${p.total} leçons • ${p.p}% • ${state.xp} XP</div><div class="stats"><div class="stat"><b>${modules.length}</b><span>niveaux</span></div><div class="stat"><b>${p.total}</b><span>leçons</span></div><div class="stat"><b>∞</b><span>pratique</span></div></div></section>
+<div class="section-title"><div><h2 style="margin:0">Commencer</h2><div class="muted">Tu peux avancer à ton rythme.</div></div><button class="btn" onclick="nav('course')">Voir les cours →</button></div>
+<div class="grid"><div class="card"><span class="badge">Conseil</span><h3>Ne cherche pas à tout retenir</h3><p class="muted">Comprends la logique, pratique une petite chose, puis passe à la suivante. Les termes techniques deviennent beaucoup plus faciles quand tu les rencontres dans un vrai projet.</p></div><div class="card"><span class="badge">Règle d'or</span><h3>Problème → solution → outil</h3><p class="muted">Ne commence jamais par « quel agent IA puis-je construire ? ». Commence par « quelle tâche coûte du temps ou de l'argent ? ».</p></div><div class="card"><span class="badge">Objectif final</span><h3>Ton premier projet</h3><p class="muted">À la fin, tu devras être capable de concevoir une automatisation commerciale simple et d'expliquer pourquoi elle a une valeur pour une entreprise.</p></div></div>`;
+}
+function course(a){
+ const p=progress();
+ a.innerHTML=`<div class="section-title"><div><h2 style="margin:0">Cours</h2><div class="muted">${p.done}/${p.total} terminées</div></div></div><div class="grid">${modules.map(m=>`<div class="card"><span class="badge">${m.tag}</span><h3>${m.id}. ${m.title}</h3><p class="muted">${m.desc}</p><p class="small">${m.lessons.length} leçons • ${m.lessons.filter((_,i)=>isDone(m.id,i)).length}/${m.lessons.length} terminées</p><button class="btn" onclick="openModule(${m.id})">Ouvrir</button></div>`).join("")}</div>`;
+}
+function openModule(id){
+ const m=modules.find(x=>x.id===id); const a=document.getElementById("app");
+ a.innerHTML=`<button class="btn secondary" onclick="nav('course')">← Cours</button><div class="section-title"><div><span class="badge">${m.tag}</span><h2>${m.id}. ${m.title}</h2><p class="muted">${m.desc}</p></div></div><div class="grid">${m.lessons.map((l,i)=>`<div class="card"><span class="pill">Leçon ${i+1}</span><h3>${l[0]}</h3><p class="small ${isDone(m.id,i)?'done':''}">${isDone(m.id,i)?'✓ Terminée':'À faire'}</p><button class="btn ${isDone(m.id,i)?'secondary':''}" onclick="openLesson(${id},${i})">${isDone(m.id,i)?'Revoir':'Commencer'}</button></div>`).join("")}</div>`;
+}
+function openLesson(mid,li){
+ const m=modules.find(x=>x.id===mid), l=m.lessons[li], a=document.getElementById("app");
+ a.innerHTML=`<button class="btn secondary" onclick="openModule(${mid})">← ${m.title}</button><div class="lesson-head"><span class="badge">${m.tag} • Leçon ${li+1}/${m.lessons.length}</span><h2>${l[0]}</h2></div><article class="lesson-content">${l[1]}</article><div class="card" style="margin-top:20px"><h3>🎯 À retenir</h3><p class="muted">Après cette leçon, tu dois pouvoir expliquer l'idée avec tes propres mots. Si ce n'est pas encore le cas, relis-la : tu n'as aucune raison de te presser.</p><div class="actions"><button class="btn" onclick="completeLesson(${mid},${li})">${isDone(mid,li)?'✓ Terminée':'Marquer comme terminée'}</button><button class="btn secondary" onclick="openModule(${mid})">Leçon suivante / retour</button></div></div>`;
+ window.scrollTo(0,0);
+}
+function completeLesson(mid,li){
+ if(!isDone(mid,li)){state.done.push(doneKey(mid,li));state.xp+=20;save()}
+ openModule(mid);
+}
+function practice(a){
+ const drills=[
+["Dessine un workflow","Prends une tâche répétitive réelle et écris : déclencheur → action 1 → action 2 → résultat.","Exemple : nouveau formulaire → récupérer email → ajouter au CRM → notifier."],
+["Trouve 5 tâches répétitives","Dans une entreprise fictive, note cinq tâches qui pourraient être automatisées.","Relances, saisie de données, classement d'emails, notifications, reporting."],
+["Transforme une demande en workflow","Écris le workflow d'un client qui demande un devis.","Formulaire → qualification → CRM → email → notification."],
+["Décide si l'IA est nécessaire","Pour chaque tâche, demande si une règle simple suffit ou si une interprétation humaine est nécessaire.","Si c'est déterministe, pas besoin d'agent IA."],
+["Calcule la valeur","Estime heures gagnées × coût horaire ou nombre de prospects mieux traités.","Le business commence par la valeur, pas par le nombre de nodes."]
+];
+ a.innerHTML=`<h2>🧪 Pratique</h2><p class="muted">Ces exercices sont volontairement simples. Le but est de développer ton raisonnement d'automatisation avant de complexifier les outils.</p><div class="grid">${drills.map((d,i)=>`<div class="card"><span class="badge">Exercice ${i+1}</span><h3>${d[0]}</h3><p>${d[1]}</p><div class="concept small">${d[2]}</div><button class="btn secondary" onclick="practiceNote(${i})">Écrire ma réponse</button></div>`).join("")}</div><div class="card" style="margin-top:18px"><h3>📝 Mon carnet</h3><textarea id="notes" class="textarea" placeholder="Écris ici tes idées, questions ou blocages...">${state.notes||""}</textarea><div class="actions"><button class="btn" onclick="saveNotes()">Sauvegarder</button></div></div>`;
+}
+function practiceNote(i){document.getElementById("notes")?.focus(); alert("Écris ta réponse dans ton carnet en bas de la page. Tu peux aussi me la copier ici pour que je te corrige.");}
+function saveNotes(){state.notes=document.getElementById("notes").value;save();alert("Carnet sauvegardé sur cet appareil.");}
+function business(a){
+ const cases=[
+["Agence immobilière","Demandes entrantes, qualification, relances, rendez-vous","Formulaire → IA de qualification → CRM → relance → notification"],
+["Salon / institut","Prises de rendez-vous, questions répétitives, rappels","Message → classification → réponse → réservation → rappel"],
+["E-commerce","Questions clients, tri des demandes, suivi","Email → classification → FAQ/IA → ticket → escalade"],
+["Agence marketing","Reporting, collecte de données, briefs","Sources → collecte → synthèse → rapport → envoi"],
+["Artisan / PME locale","Demandes de devis et suivi","Formulaire → qualification → tableau → réponse → relance"]
+];
+ a.innerHTML=`<h2>💰 Business Lab</h2><p class="muted">Ici tu apprends à transformer une compétence technique en offre. Ce ne sont pas des « business miracles » : ce sont des problèmes à vérifier auprès de vraies entreprises.</p><div class="card"><h3>La formule</h3><div class="flow"><span>Problème</span>→<span>Processus</span>→<span>Automatisation</span>→<span>Résultat mesurable</span></div></div><div class="grid" style="margin-top:14px">${cases.map(c=>`<div class="card"><span class="badge">Piste à étudier</span><h3>${c[0]}</h3><p>${c[1]}</p><div class="concept small"><b>Workflow possible :</b><br>${c[2]}</div><p class="muted small">Question à poser : « Combien de temps vous prend cette tâche et combien de fois par semaine arrive-t-elle ? »</p></div>`).join("")}</div>`;
+}
+function glossaryPage(a){
+ a.innerHTML=`<h2>📖 Glossaire</h2><p class="muted">Cherche un terme quand tu le rencontres dans une vidéo ou n8n.</p><input id="search" class="search" placeholder="Rechercher : API, webhook, node..." oninput="filterTerms()"><div id="terms" style="margin-top:14px">${glossary.map(x=>`<div class="term"><b>${x[0]}</b><p class="muted" style="margin:5px 0">${x[1]}</p></div>`).join("")}</div>`;
+}
+function filterTerms(){let q=document.getElementById("search").value.toLowerCase();document.querySelectorAll(".term").forEach(e=>e.classList.toggle("hide",!e.textContent.toLowerCase().includes(q)))}
+nav("home");
+</script>
+</body>
+</html>

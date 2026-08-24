@@ -1,0 +1,29 @@
+name: Activate Automation School enhancements
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  enhance:
+    if: github.actor != 'automation-school-bot'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add enhancement script to site
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          marker='<script src="enhance.js"></script>'
+          if marker not in s:
+              s=s.replace('</body>', marker+'\n</body>')
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit enhancement activation
+        run: |
+          git config user.name 'automation-school-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || (git commit -m 'Activate visual diagrams and open answer correction' && git push)
